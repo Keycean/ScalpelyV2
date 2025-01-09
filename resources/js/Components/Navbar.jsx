@@ -1,9 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null); // Tracks which menu item is clicked (active)
+  const [isScrolled, setIsScrolled] = useState(false); // Tracks if the user has scrolled
 
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the user has scrolled down
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
     if (isMenuOpen) {
@@ -17,7 +36,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-cyan-400 text-white fixed w-full top-0 z-50">
+    <nav  className={`fixed w-full text-white top-0 z-50 transition-colors duration-300 ${
+      isScrolled ? "bg-cyan-400 " : "bg-transparent"
+    }`} >
       <div className="w-full max-w-7x10 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left: Search Icon */}
