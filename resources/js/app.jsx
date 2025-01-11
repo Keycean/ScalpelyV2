@@ -6,6 +6,8 @@ import "../css/app.css"; // Import the Tailwind CSS
 import Navbar from "./Components/Navbar"; // Import the Navbar component
 import About from "./Pages/About";
 import Location from "./Pages/Location";
+import Experience from "./Pages/Experience";
+import Footer from "./Components/Footer";
 
 const appName = window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
@@ -24,6 +26,8 @@ createInertiaApp({
                 <App {...props} />
                 <About />
                 <Location/>
+                <Experience/>
+                <Footer/>
             </div>
         );
     },

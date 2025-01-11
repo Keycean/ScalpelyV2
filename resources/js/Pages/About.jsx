@@ -7,7 +7,7 @@ const About = () => {
         <div className=" bg-gray-200 py-10 text-center min-h-[30vh] ">
                 <h3 className="text-4xl  mb-0 text-center">A HEALTHIER YOU STARTS HERE</h3>
                 <h3 className="text-4xl  mb-8 text-center">MAKE AN APPOINTMENT NOW</h3>
-                <p className="mb-0 text-2xl text-center">
+                <p className="mb-0 text-2xl text-center ">
                     Need a primary care or pharmacy appointment? Use self-scheduling to book online 
                 </p>
                 <p className="mb-12 text-2xl  text-center">quickly! 
