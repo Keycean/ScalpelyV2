@@ -1,6 +1,9 @@
 import React from 'react';  
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+   
+
     return (
         <div className="homepage">
             {/* Combined Hero and Main Section */}
@@ -39,15 +42,16 @@ const Home = () => {
                         <div className="card rounded-lg p-6 text-center bg-transparent">
                             <h3 className="text-xl  text-left text-white">LOG IN TO</h3>
                             <p className="text-xl font-bold  text-left text-white mb-3">DASHBOARD</p>
-                            <button className=" w-60 bg-transparent  shadow-lg border-solid border-2 border-white-500 text-white py-2 px-4 rounded-lg hover:bg-cyan-600">
+                            <button 
+                                className="w-60 bg-transparent shadow-lg border-solid border-2 border-white-500 text-white py-2 px-4 rounded-lg hover:bg-cyan-600"
+                        
+                            >
                                LOGIN
-                            </button>
+                            </button>  
                         </div>
                     </div>
                 </div>
             </div>
-
-          
         </div>
     );
 };
