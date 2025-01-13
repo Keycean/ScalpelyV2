@@ -18,7 +18,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $user = User::create([
+         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -30,31 +30,32 @@ class AuthController extends Controller
 
     // Login a user and generate a token
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-    
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid login credentials'], 401);
-        }
-    
-        $user = Auth::user();
-    
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 401);
-        }
-    
-        $token = $user->createToken('auth_token')->plainTextToken;
-    
-        return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-            'user' => $user,
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string|min:6',
+    ]);
+
+    if (!Auth::attempt($request->only('email', 'password'))) {
+        return response()->json(['message' => 'Invalid login credentials'], 401);
     }
-    
+
+    /** @var user */
+    $user = Auth::user();
+
+    // Check if user instance exists
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login successful',
+        'token' => $token,
+        'user' => $user,
+    ]);
+}
 
     // Logout a user and revoke all tokens
     public function logout(Request $request)

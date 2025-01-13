@@ -2,17 +2,11 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import "../css/app.css"; // Import the Tailwind CSS
-import Navbar from "./Components/Navbar"; // Import the Navbar component
-import About from "./Pages/About";
-import Location from "./Pages/Location";
-import Experience from "./Pages/Experience";
-import Login from './Pages/Login';
+import "../css/app.css";
+import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 
-
-const appName = window.document.getElementsByTagName("title")[0]?.innerText || "Scapely";
+const appName = window.document.getElementsByTagName("title")[0]?.innerText || "Scalpely";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -25,13 +19,10 @@ createInertiaApp({
         const root = createRoot(el);
         root.render(
             <div>
-                <Navbar /> {/* Add the Navbar here */}
+                
+                <Navbar />
                 <App {...props} />
-                <About />
-                <Location/>
-                <Experience/>
-                <Footer/>
-        
+                <Footer />
             </div>
         );
     },

@@ -7,6 +7,7 @@
     @viteReactRefresh
     @vite('resources/css/app.css')
     @vite('resources/js/app.jsx') <!-- Adjust to app.jsx if that's your entry point -->
+    @inertiaHead
 </head>
 <body>
     @inertia
