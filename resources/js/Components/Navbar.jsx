@@ -63,7 +63,7 @@ const Navbar = () => {
             {/* Left: Search Icon */}
             <div className="flex items-center justify-start">
               <button 
-                className="focus:outline-none p-2 h-20  transition-all duration-300 hover:bg-cyan-400 active:bg-cyan-600" 
+                className="focus:outline-none p-2 h-16  transition-all duration-300 hover:bg-cyan-400 active:bg-cyan-600" 
                 onClick={toggleSearch}
               >
                 <img 
@@ -204,17 +204,17 @@ const Navbar = () => {
               />
               <button
                 onClick={handleSearch}
-                className="px-6 py-2 bg-cyan-600 text-white rounded-lg transition-all duration-300 hover:bg-cyan-700 active:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="px-8 py-2 bg-cyan-600 text-white rounded-lg transition-all duration-300 hover:bg-cyan-700 active:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               >
                 Search
               </button>
           
             </div>
             <div className="flex gap-8">
-            <button className="flex-grow">    Find a Doctor</button>
-            <button  className="flex-grow">    Find a Doctor</button>
-            <button  className="flex-grow">    Find a Doctor</button>
-            <button className="flex-grow">    Find a Doctor</button>
+            <button className="flex-grow mt-4">    Find a Doctor</button>
+            <button  className="flex-grow mt-4">    Find a Doctor</button>
+            <button  className="flex-grow mt-4">    Find a Doctor</button>
+            <button className="flex-grow mt-4">    Find a Doctor</button>
             </div>
             
           </div>

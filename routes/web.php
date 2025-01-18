@@ -2,7 +2,7 @@
 <?php
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return Inertia::render('Home');
 });
+
+
 Route::get('/login', function () {
-    return Inertia::render('Login');});
+    return Inertia::render('Auth/Login');
+})->name('login');
  
 Route::get('/register', function () {
     return Inertia::render('Register');

@@ -4,10 +4,15 @@ import { router } from "@inertiajs/react";
 import About from './About';
 import Location from './Location';
 import Experience from './Experience';
+import Navbar from '../Components/Navbar';
+import Footer from '../Components/Footer';
+
 
 const Home = () => {
     return (
+        
         <div className="homepage">
+            <Navbar/>
             {/* Combined Hero and Main Section */}
             <div
                 className="hero bg-cover bg-center relative text-center min-h-[90vh] flex items-center justify-center"
@@ -76,6 +81,7 @@ const Home = () => {
             <About />
             <Location />    
             <Experience />  
+            <Footer/>
         </div>
         
     );
