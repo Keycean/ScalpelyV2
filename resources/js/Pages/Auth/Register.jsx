@@ -2,14 +2,14 @@ import React from "react";
 import { useForm } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 
-export default function Login() {
+export default function Register() {
     const { data, setData, post, processing, errors } = useForm({
         email: "",
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("login"));
+        post(route("register"));
     };
 
     return (
@@ -36,7 +36,7 @@ export default function Login() {
             {/* Right Panel */}
             <div className="w-full md:w-1/2 bg-white p-4 md:p-8">
                 <div className="w-full max-w-md mx-auto pt-8">
-                    <Link href="/" className="inline-block mb-16 text-gray-600 flex items-center ">
+                    <Link href="/" className="inline-block mb-16 text-gray-600 flex items-center">
                         <svg
                             className="w-5 h-5 mr-2"
                             fill="none"
@@ -54,9 +54,9 @@ export default function Login() {
                     </Link>
                     
                     <h2 className="text-2xl md:text-3xl font-bold text-black mb-2">
-                        Log in to your Scalpely Account
+                        Create your Scalpely Account
                     </h2>
-                    <p className="text2xl text-center text-gray-800 ">Login to manage your account</p>
+                    <p className="text2xl text-center text-gray-800">Fill out the form to get started.</p>
 
                     {/* Social Login Buttons */}
                     <div className="space-y-3 mt-8">
@@ -109,6 +109,7 @@ export default function Login() {
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-sm text-gray-600 mb-1">Email</label>
+                            
                             <input
                                 type="email"
                                 required
@@ -122,7 +123,8 @@ export default function Login() {
                                     {errors.email}
                                 </div>
                             )}
-                            <p className="mt-1 text-xs text-gray-500">Use an organization email to easily collaborate with  teammates.</p>
+                            <p className="block text-right text-gray-700 text-sm">Optional</p>
+                            <p className="mt-1 text-xs text-gray-500">Use an organization email to easily collaborate with teammates.</p>
                         </div>
 
                         <button
@@ -134,17 +136,18 @@ export default function Login() {
                         </button>
 
                         <div className="text-center mt-4">
-                            <span className="text-gray-600 text-sm">Don't have an account? </span>
-                            <Link href="/register" className="text-[#39c4e3] hover:text-[#33b3d1] text-sm">
-                                Create new account
+                            <span className="text-gray-600 text-sm">Already have an account? </span>
+                            <Link href="/login" className="text-[#39c4e3] hover:text-[#33b3d1] text-sm">
+                                Login
                             </Link>
                         </div>
-                         <p className="text-xs text-gray-500 text-center mt-6">
-                                                    Your name and profile picture will be visible to individuals who send you workspace invitations using your email address. By proceeding, you confirm that you have read, understood, and agreed to our 
-                                                    <Link href="term" className="text-[#39c4e3] hover:text-[#33b3d1]"> Terms of Service </Link>
-                                                    and 
-                                                    <Link href="policy" className="text-[#39c4e3] hover:text-[#33b3d1]"> Privacy Policy</Link>.
-                                                </p>
+
+                        <p className="text-xs text-gray-500 text-center mt-6">
+                            Your name and profile picture will be visible to individuals who send you workspace invitations using your email address. By proceeding, you confirm that you have read, understood, and agreed to our 
+                            <Link href="term" className="text-[#39c4e3] hover:text-[#33b3d1]"> Terms of Service </Link>
+                            and 
+                            <Link href="policy" className="text-[#39c4e3] hover:text-[#33b3d1]"> Privacy Policy</Link>.
+                        </p>
                     </form>
                 </div>
             </div>
