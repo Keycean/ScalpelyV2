@@ -4,11 +4,63 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\VerificationCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationCodeMail;
 
 class AuthController extends Controller
 {
+    public function sendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        // Generate 6-digit code
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        
+        // Store code in database
+        VerificationCode::create([
+            'email' => $request->email,
+            'code' => $code,
+            'expires_at' => now()->addMinutes(10),
+            'used' => false
+        ]);
+
+        // Send email with code
+        Mail::to($request->email)->send(new VerificationCodeMail($code));
+
+        return response()->json(['message' => 'Verification code sent']);
+    }
+
+    public function verifyCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|string|size:6'
+        ]);
+
+        $verificationCode = VerificationCode::where('email', $request->email)
+            ->where('code', $request->code)
+            ->where('used', false)
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->first();
+
+        if (!$verificationCode) {
+            return back()->withErrors(['code' => 'Invalid or expired verification code']);
+        }
+
+        $verificationCode->used = true;
+        $verificationCode->save();
+
+        $user = User::where('email', $request->email)->first();
+        Auth::login($user);
+
+        return redirect()->intended('/dashboard');
+    }
     // Register a new user
     public function register(Request $request)
     {
@@ -76,4 +128,5 @@ class AuthController extends Controller
     {
         return response()->json(['message' => 'Welcome Client']);
     }
+    
 }

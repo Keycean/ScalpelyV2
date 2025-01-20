@@ -1,16 +1,43 @@
-import React from "react";
+import React, {useState} from "react";
 import { useForm } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 
+
 export default function Login() {
+    const [showVerification, setShowVerification] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
         email: "",
+        code: "",
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        post(route("login"));
+        
+        if (!showVerification) {
+            // Send verification code
+            try {
+                const response = await fetch('/auth/send-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ email: data.email })
+                });
+
+                if (response.ok) {
+                    setShowVerification(true);
+                }
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+            }
+        } else {
+            // Verify code and login
+            post(route("verify-code"));
+        }
     };
+    
+
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row">
@@ -116,6 +143,7 @@ export default function Login() {
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#39c4e3] focus:border-[#39c4e3]"
                                 value={data.email}
                                 onChange={(e) => setData("email", e.target.value)}
+                                disabled={showVerification}
                             />
                             {errors.email && (
                                 <div className="mt-1 text-red-500 text-sm">
@@ -124,15 +152,46 @@ export default function Login() {
                             )}
                             <p className="mt-1 text-xs text-gray-500">Use an organization email to easily collaborate with  teammates.</p>
                         </div>
+                        {showVerification && (
+                            <div className="mt-4">
+                                <label className="block text-sm text-gray-600 mb-1">Verification Code</label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Enter 6-digit code"
+                                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#39c4e3] focus:border-[#39c4e3]"
+                                    value={data.code}
+                                    onChange={(e) => setData("code", e.target.value)}
+                                    maxLength={6}
+                                    pattern="[0-9]{6}"
+                                />
+                                {errors.code && (
+                                    <div className="mt-1 text-red-500 text-sm">
+                                        {errors.code}
+                                    </div>
+                                )}
+                                <p className="mt-2 text-sm text-gray-500">
+                                    Didn't receive the code?{" "}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleSubmit}
+                                        className="text-[#39c4e3] hover:text-[#33b3d1]"
+                                    >
+                                        Resend
+                                    </button>
+                                </p>
+                            </div>
+                        )}
 
-                        <button
+
+<button
                             type="submit"
                             disabled={processing}
                             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#39c4e3] hover:bg-[#33b3d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39c4e3] mt-4"
                         >
-                            Continue
+                            {showVerification ? "Verify & Login" : "Continue"}
                         </button>
-
+                            
                         <div className="text-center mt-4">
                             <span className="text-gray-600 text-sm">Don't have an account? </span>
                             <Link href="/register" className="text-[#39c4e3] hover:text-[#33b3d1] text-sm">

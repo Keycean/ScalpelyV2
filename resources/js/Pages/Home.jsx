@@ -51,7 +51,7 @@ const Home = () => {
                             <h3 className="text-xl  text-left text-white ">
                                 SCHEDULE AN{" "}
                             </h3>
-                            <p className="text-xl font-bold  text-left text-white mb-3">
+                            <p className="text-xl font-bold  text-left text-white mb-5 ">
                                 APPOINTMENT
                             </p>
                             <Link 
@@ -64,7 +64,7 @@ const Home = () => {
                             <h3 className="text-xl  text-left text-white">
                                 LOG IN TO
                             </h3>
-                            <p className="text-xl font-bold  text-left text-white mb-3">
+                            <p className="text-xl font-bold  text-left text-white mb-5">
                                 DASHBOARD
                             </p>
                             <Link 

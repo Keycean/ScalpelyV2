@@ -23,3 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
     
 });
+
+Route::middleware(['auth:sanctum'])->post('/onboard', function (Request $request) {
+    $user = $request->user();
+    $user->update($request->validate([
+        'role' => 'required|string',
+        'company' => 'required|string',
+        'interests' => 'array',
+        'notifications' => 'boolean'
+    ]));
+    
+    return response()->json(['success' => true]);
+});
