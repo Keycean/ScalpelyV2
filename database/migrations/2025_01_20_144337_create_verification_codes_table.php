@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('email'); // Useful if you're verifying without a user record first
             $table->string('code');
             $table->timestamp('expires_at');
             $table->boolean('used')->default(false);

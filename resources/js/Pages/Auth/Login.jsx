@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 
 
@@ -33,7 +33,7 @@ export default function Login() {
             }
         } else {
             // Verify code and login
-            post(route("verify-code"));
+            router.post('/verify-code', data,);
         }
     };
     
@@ -185,7 +185,7 @@ export default function Login() {
 
 
 <button
-                            type="submit"
+                            type="submit" 
                             disabled={processing}
                             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#39c4e3] hover:bg-[#33b3d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39c4e3] mt-4"
                         >

@@ -1,37 +1,35 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\OnboardController;
+
+
+// Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::match(['get', 'post'], '/test-email', [AuthController::class, 'testEmail']); // Only POST for test email
+Route::post('register', [RegisterController::class, 'register']);
+Route::post('verify-email', [RegisterController::class, 'verifyEmail']);
+Route::post('/onboard', [OnboardController::class, 'store']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+// Routes requiring authentication
+Route::middleware('auth:sanctum')->group(function () {
+    // User info route
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Admin and Client routes with role-based middleware
     Route::middleware('role:admin')->get('/admin', [AuthController::class, 'admin']);
     Route::middleware('role:client')->get('/client', [AuthController::class, 'client']);
-    return $request->user();
-    
+
+    // Verification routes (for authenticated users)
+   
+
 });
 
-Route::middleware(['auth:sanctum'])->post('/onboard', function (Request $request) {
-    $user = $request->user();
-    $user->update($request->validate([
-        'role' => 'required|string',
-        'company' => 'required|string',
-        'interests' => 'array',
-        'notifications' => 'boolean'
-    ]));
-    
-    return response()->json(['success' => true]);
-});

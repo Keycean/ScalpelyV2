@@ -4,129 +4,145 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\VerificationCode;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
+use Carbon\Carbon;
+use App\Models\VerificationCode;
 
 class AuthController extends Controller
 {
-    public function sendVerificationCode(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ]);
-
-        // Generate 6-digit code
-        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
-        // Store code in database
-        VerificationCode::create([
-            'email' => $request->email,
-            'code' => $code,
-            'expires_at' => now()->addMinutes(10),
-            'used' => false
-        ]);
-
-        // Send email with code
-        Mail::to($request->email)->send(new VerificationCodeMail($code));
-
-        return response()->json(['message' => 'Verification code sent']);
-    }
-
-    public function verifyCode(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'code' => 'required|string|size:6'
-        ]);
-
-        $verificationCode = VerificationCode::where('email', $request->email)
-            ->where('code', $request->code)
-            ->where('used', false)
-            ->where('expires_at', '>', now())
-            ->latest()
-            ->first();
-
-        if (!$verificationCode) {
-            return back()->withErrors(['code' => 'Invalid or expired verification code']);
-        }
-
-        $verificationCode->used = true;
-        $verificationCode->save();
-
-        $user = User::where('email', $request->email)->first();
-        Auth::login($user);
-
-        return redirect()->intended('/dashboard');
-    }
-    // Register a new user
     public function register(Request $request)
     {
+        Log::info('Request data received: ', $request->all());
+    
+        // Validate the request
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email|unique:users,email',
         ]);
-
-         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'client', // Default to client role
-        ]);
-
-        return response()->json(['message' => 'User registered successfully'], 201);
+    
+        try {
+            // Create a new user
+            $user = User::create([
+                'email' => $request->email,
+                'is_verified' => false,
+            ]);
+    
+            // Check if user creation was successful
+            if (!$user || !$user->exists) {
+                Log::error('User creation failed.');
+                return response()->json(['error' => 'Failed to register user. Please try again.'], 500);
+            }
+    
+            Log::info('User created successfully: ', $user->toArray());
+    
+            // Pass the user object to sendVerificationCode
+            $this->sendVerificationCode($user);
+    
+            return response()->json(['message' => 'A verification code has been sent to your email.'], 201);
+        } catch (\Exception $e) {
+            Log::error('Error during registration: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to register user. Please try again.'], 500);
+        }
     }
+    
 
-    // Login a user and generate a token
-    public function login(Request $request)
+
+    public function sendVerificationCode(string $email)
+{
+    $verificationCode = rand(100000, 999999);
+
+    VerificationCode::create([
+        'email' => $email,
+        'code' => $verificationCode,
+        'expires_at' => now()->addMinutes(10),
+        'used' => false,
+    ]);
+
+    Mail::to($email)->send(new VerificationCodeMail($verificationCode));
+
+    return response()->json(['message' => 'Verification code sent successfully.']);
+}
+
+
+    /**
+     * Verify the user's email using the verification code.
+     */
+    public function verifyCode(Request $request)
 {
     $request->validate([
         'email' => 'required|email',
-        'password' => 'required|string|min:6',
+        'code' => 'required|string|size:6',
     ]);
 
-    if (!Auth::attempt($request->only('email', 'password'))) {
-        return response()->json(['message' => 'Invalid login credentials'], 401);
+    $verificationCode = VerificationCode::where('email', $request->email)
+        ->where('code', $request->code)
+        ->where('used', false)
+        ->where('expires_at', '>', Carbon::now())
+        ->first();
+
+    if (!$verificationCode) {
+        return response()->json(['error' => 'Invalid or expired verification code.'], 400);
     }
 
-    /** @var user */
-    $user = Auth::user();
+    // Mark the code as used
+    $verificationCode->update(['used' => true]);
 
-    // Check if user instance exists
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
-    }
-
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json([
-        'message' => 'Login successful',
-        'token' => $token,
-        'user' => $user,
-    ]);
+    return response()->json(['message' => 'Verification successful.'], 200);
 }
+    /**
+     * Test email functionality.
+     */
+    public function testEmail()
+    {
+        try {
+            Mail::raw('This is a test email', function ($message) {
+                $message->to('your-email@example.com')
+                    ->subject('Test Email');
+            });
 
-    // Logout a user and revoke all tokens
+            if (Mail::failures()) {
+                Log::error('Failed to send test email.');
+                return response()->json(['error' => 'Failed to send test email.'], 500);
+            }
+
+            Log::info('Test email sent successfully.');
+            return response()->json(['message' => 'Test email sent successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error in testEmail: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to send test email.'], 500);
+        }
+    }
+
+    /**
+     * Logout a user and revoke all tokens.
+     */
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        try {
+            $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Logged out successfully']);
+            Log::info('User logged out successfully.', ['user_id' => $request->user()->id]);
+            return response()->json(['message' => 'Logged out successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error logging out: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to log out.'], 500);
+        }
     }
 
-    // Admin-specific endpoint
+    /**
+     * Placeholder admin endpoint.
+     */
     public function admin()
     {
         return response()->json(['message' => 'Welcome Admin']);
     }
 
-    // Client-specific endpoint
+    /**
+     * Placeholder client endpoint.
+     */
     public function client()
     {
         return response()->json(['message' => 'Welcome Client']);
     }
-    
 }

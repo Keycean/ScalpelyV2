@@ -40,48 +40,73 @@ export default function Onboard({ user }) {
     });
   };
 
-  const renderPersonalInfo = () => (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Tell us about yourself</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Your Role
-            </label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Company
-            </label>
-            <input
-              type="text"
-              name="company"
-              value={formData.company}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
+  
 
+  const renderPersonalInfo = () => (
+    <div className="w-full max-w-2xl px-6 py-8 bg-transparent text-white flex flex-col justify-center items-center">
+      <h2 className="text-4xl font-bold mb-6 text-center">Tell us about yourself</h2>
+      <p className="text-4xl font-medium mb-6 text-[#BBB6B6] text-center tracking-wide">
+        This helps show relevant content
+      </p>
+      <form onSubmit={handleSubmit} className="w-full space-y-6">
+        {/* Work field */}
+        <div>
+          <label className="block text-sm font-medium text-[#BBB6B6] mb-1">
+            What kind of work do you do?
+          </label>
+          <input
+            type="text"
+            name="work"
+            placeholder="Doctors"
+            value={formData.work || ''}
+            onChange={handleInputChange}
+            className="block w-full h-10 pl-3 pr-10 border border-gray-500 shadow-sm text-black rounded focus:border-indigo-500 focus:ring-indigo-500"
+          />
+        </div>
+  
+        {/* Role field */}
+        <div>
+          <label className="block text-sm font-medium text-[#BBB6B6] mb-1">
+            What's your role?
+          </label>
+          <input
+            type="text"
+            name="role"
+            placeholder="Team Manager"
+            value={formData.role || ''}
+            onChange={handleInputChange}
+            className="block w-full h-10 pl-3 pr-10 border border-gray-500 shadow-sm text-black rounded focus:border-indigo-500 focus:ring-indigo-500"
+          />
+        </div>
+  
+        {/* Company size field */}
+        <div>
+          <label className="block text-sm font-medium text-[#BBB6B6] mb-1">
+            What's the size of your company?
+          </label>
+          <input
+            type="text"
+            name="company"
+            placeholder="1-49"
+            value={formData.company || ''}
+            onChange={handleInputChange}
+            className="block w-full h-10 pl-3 pr-10 border border-gray-500 shadow-sm text-black rounded focus:border-indigo-500 focus:ring-indigo-500"
+          />
+        </div>
+  
+        {/* Submit button */}
+        <div className="flex justify-center">
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-1/2 flex mt-10 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Next Step
+            Continue
           </button>
         </div>
       </form>
     </div>
   );
-
+  
   const renderPreferences = () => (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6">Set Your Preferences</h2>
@@ -153,8 +178,8 @@ export default function Onboard({ user }) {
   return (
     <>
       <Head title="Onboard" />
-      <main className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[#1D2A4D] py-12 flex items-center justify-center">
+        <div className="w-full max-w-2xl flex flex-col justify-center items-center">
           {currentStep === OnboardSteps.PERSONAL_INFO && renderPersonalInfo()}
           {currentStep === OnboardSteps.PREFERENCES && renderPreferences()}
           {currentStep === OnboardSteps.COMPLETE && renderComplete()}

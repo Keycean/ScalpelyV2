@@ -12,4 +12,9 @@ class VerificationCode extends Model
         'expires_at' => 'datetime',
         'used' => 'boolean',
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

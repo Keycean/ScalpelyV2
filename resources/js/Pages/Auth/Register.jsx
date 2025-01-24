@@ -1,15 +1,94 @@
-import React from "react";
-import { useForm } from "@inertiajs/react";
+import React, { useState } from "react";
+import { useForm, router } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 
 export default function Register() {
+    const [showVerification, setShowVerification] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
         email: "",
+        code: "",
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        post(route("register"));
+
+        if (!showVerification) {
+            // Send verification code
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ email: data.email })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.redirect) {
+                        // Redirect to onboarding page if redirect URL exists
+                        window.location.href = result.redirect;
+                    } else {
+                        setShowVerification(true);
+                    }
+                } else {
+                    console.error('Error:', result.error);
+                }
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+            }
+        } else {
+            // Verify code and complete registration
+            try {
+                const response = await fetch('/api/verify-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // If the response includes a redirect, navigate to onboarding page
+                    if (result.redirect) {
+                        window.location.href = result.redirect;
+                    }
+                } else {
+                    console.error('Error:', result.error);
+                }
+            } catch (error) {
+                console.error('Error verifying code:', error);
+            }
+        }
+    };
+
+    // Handle resend verification code
+    const handleResend = async () => {
+        try {
+            const response = await fetch('/api/resend-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ email: data.email })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Verification code resent!');
+            } else {
+                console.error('Error:', result.error);
+            }
+        } catch (error) {
+            console.error('Error resending code:', error);
+        }
     };
 
     return (
@@ -109,7 +188,6 @@ export default function Register() {
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-sm text-gray-600 mb-1">Email</label>
-                            
                             <input
                                 type="email"
                                 required
@@ -117,23 +195,55 @@ export default function Register() {
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#39c4e3] focus:border-[#39c4e3]"
                                 value={data.email}
                                 onChange={(e) => setData("email", e.target.value)}
+                                disabled={showVerification}
                             />
                             {errors.email && (
                                 <div className="mt-1 text-red-500 text-sm">
                                     {errors.email}
                                 </div>
                             )}
-                            <p className="block text-right text-gray-700 text-sm">Optional</p>
-                            <p className="mt-1 text-xs text-gray-500">Use an organization email to easily collaborate with teammates.</p>
+                            <p className="mt-1 text-xs text-gray-500">Use an organization email to easily collaborate with  teammates.</p>
                         </div>
+
+                        {showVerification && (
+                            <div className="mt-4">
+                                <label className="block text-sm text-gray-600 mb-1">Verification Code</label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Enter 6-digit code"
+                                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#39c4e3] focus:border-[#39c4e3]"
+                                    value={data.code}
+                                    onChange={(e) => setData("code", e.target.value)}
+                                    maxLength={6}
+                                    pattern="[0-9]{6}"
+                                />
+                                {errors.code && (
+                                    <div className="mt-1 text-red-500 text-sm">
+                                        {errors.code}
+                                    </div>
+                                )}
+                                <p className="mt-2 text-sm text-gray-500">
+                                    Didn't receive the code?{" "}
+                                    <button
+                                        type="button"
+                                        onClick={handleResend}
+                                        className="text-[#39c4e3] hover:text-[#33b3d1]"
+                                    >
+                                        Resend
+                                    </button>
+                                </p>
+                            </div>
+                        )}
 
                         <button
                             type="submit"
                             disabled={processing}
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#39c4e3] hover:bg-[#33b3d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39c4e3] mt-4"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#39c4e3] hover:bg-[#33b3d1] focus:outline-none focus:ring-2 focus:ring-[#39c4e3] focus:ring-offset-2"
                         >
-                            Continue
+                            {showVerification ? "Verify Code" : "Send Code"}
                         </button>
+                            
 
                         <div className="text-center mt-4">
                             <span className="text-gray-600 text-sm">Already have an account? </span>

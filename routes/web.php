@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\GoogleController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\OnboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,20 +33,17 @@ Route::get('/register', function () {
 });
 
 
+// This is for the onboarding route, ensuring it's open for guests (unauthenticated users)
+Route::get('/onboard', [OnboardController::class, 'index'])->name('onboard');
+
+
 Route::middleware(['web'])->group(function () {
     Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])
         ->name('google.login');
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-    
-    // Protected onboard route
-    Route::middleware(['auth', 'verified'])->group(function () {
-        Route::get('/onboard', function () {
-            return Inertia::render('Onboard', [
-                'user' => auth()->user()
-            ]);
-        })->name('onboard');
-    });
 });
 
-Route::post('/auth/send-verification', [AuthController::class, 'sendVerificationCode']);
-Route::post('/verify-code', [AuthController::class, 'verifyCode'])->name('verify-code');
+// Route::post('/auth/send-verification', [AuthController::class, 'sendVerificationCode']);
+// Route::post('/verify-code', [AuthController::class, 'verifyCode'])->name('verify-code');
+
+
