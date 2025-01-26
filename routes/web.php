@@ -47,3 +47,13 @@ Route::middleware(['web'])->group(function () {
 // Route::post('/verify-code', [AuthController::class, 'verifyCode'])->name('verify-code');
 
 
+Route::get('/onboard', [OnboardController::class, 'index'])->name('onboard.index');
+Route::post('/onboard/step1', [OnboardController::class, 'storeStep1'])->name('onboard.step1');
+Route::post('/onboard/step2', [OnboardController::class, 'storeStep2'])->name('onboard.step2');
+Route::post('/onboard/step3', [OnboardController::class, 'storeStep3'])->name('onboard.step3');
+Route::get('/onboarding/complete', [OnboardController::class, 'completeOnboarding'])->name('onboarding.complete');
+
+
+
+
+

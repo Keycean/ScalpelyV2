@@ -10,8 +10,12 @@ use App\Http\Controllers\OnboardController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::match(['get', 'post'], '/test-email', [AuthController::class, 'testEmail']); // Only POST for test email
+
+// Verification routes
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('verify-email', [RegisterController::class, 'verifyEmail']);
+
+// Onboarding route
 Route::post('/onboard', [OnboardController::class, 'store']);
 
 // Routes requiring authentication
