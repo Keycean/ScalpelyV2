@@ -8,51 +8,56 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
     /**
      * Handle user registration and send a verification code.
      */
+  
+
     public function register(Request $request)
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-
-        // Create user
+    
         try {
+            // Create the user
             $user = User::create([
                 'email' => $request->email,
                 'is_verified' => false,
             ]);
-
+    
             if (!$user) {
                 return response()->json(['error' => 'Failed to register user.'], 500);
             }
-
+    
             // Generate a verification code
             $verificationCode = rand(100000, 999999);
             $user->verification_code = $verificationCode;
             $user->save();
-
+    
+            // Log in the user
+            Auth::login($user);
+    
             // Send the verification email
             Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
-
+    
             Log::info('Verification email sent to ' . $user->email);
-
+    
             return response()->json(['message' => 'A verification code has been sent to your email.'], 201);
         } catch (\Exception $e) {
             Log::error('Registration error: ' . $e->getMessage());
             return response()->json(['error' => 'Registration failed.'], 500);
         }
     }
-
+    
     /**
      * Verify the user's email using the verification code.
      */

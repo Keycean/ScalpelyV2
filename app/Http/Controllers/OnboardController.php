@@ -26,6 +26,7 @@ class OnboardController extends Controller
      */
     public function storeStep1(Request $request)
     {
+        
         if (!$request->user()) {
             return redirect('/login')->with('error', 'You need to log in first.');
         }
@@ -41,7 +42,7 @@ class OnboardController extends Controller
             $validated
         );
 
-        return response()->json(['success' => true, 'nextStep' => 'workspace']);
+        return Inertia::render('Onboard', ['nextStep' => 'workspace']);
     }
 
     /**
@@ -67,7 +68,7 @@ class OnboardController extends Controller
         OnboardingDetail::where('user_id', $request->user()->id)
             ->update($validated);
 
-        return response()->json(['success' => true, 'nextStep' => 'add_members']);
+            return Inertia::render('Onboard', ['nextStep' => 'add_members']);
     }
 
     /**
@@ -86,7 +87,7 @@ class OnboardController extends Controller
         OnboardingDetail::where('user_id', $request->user()->id)
             ->update($validated);
 
-        return response()->json(['success' => true, 'nextStep' => 'complete']);
+            return Inertia::render('Onboard', ['nextStep' => 'complete']);
     }
 
     /**

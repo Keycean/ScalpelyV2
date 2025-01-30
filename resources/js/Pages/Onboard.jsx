@@ -43,6 +43,10 @@ export default function Onboard({ user }) {
     }));
   };
 
+  const handleAddMore = () => {
+    setEmails([...emails, '']);
+  };
+
   const handleIconChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -219,40 +223,58 @@ export default function Onboard({ user }) {
         </button>
       </form>
     </div>
+    //Add members
+    
   );
-    const renderAddmembers = () => (
-    <div className="w-full max-w-2xl px-6 py-8 bg-[#1D2A4D] text-white flex flex-col justify-center items-center">
-      <h2 className="text-4xl font-bold mb-6 text-center">Add your team members</h2>
+  const renderAddmembers = () => (
+    <div className="w-full max-w-2xl px-6 py-8 bg-[#1D2A4D] text-white flex flex-col justify-center items-center rounded-lg shadow-lg">
+      <h2 className="text-4xl font-bold mb-6 text-center">Add Your Team Members</h2>
       <p className="text-lg font-medium mb-6 text-[#BBB6B6] text-center">
         Invite your team members to collaborate on projects.
       </p>
       <form onSubmit={handleSubmit} className="w-full space-y-6">
         <div>
-          <label className="block text-sm font-medium text-[#BBB6B6] mb-1">
-            Add members
+          <label htmlFor="add_members" className="block text-sm font-medium text-[#BBB6B6] mb-1">
+            Add Members
           </label>
           <input
             type="email"
+            id="add_members"
             name="add_members"
             value={formData.add_members}
             onChange={handleInputChange}
-            placeholder="
-            Enter email addresses separated by commas"
-            className="block w-full h-10 pl-3 pr-10 border border-gray-500 shadow-sm text-black rounded focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Enter email addresses separated by commas"
+            className="block w-full h-10 pl-3 pr-10 border border-gray-500 shadow-sm text-black rounded-md focus:border-indigo-500 focus:ring-indigo-500"
+            required
           />
         </div>
-        <div className="flex justify-center">
+        
+        <div className="space-y-3">
+        <button
+          type="button"
+          onClick={handleAddMore}
+          className="flex items-center text-sm text-gray-400 hover:text-gray-300 transition-colors"
+        >
+          <span className="mr-2">＋</span>
+          Add more or bulk invite
+        </button>
+          <button
+            type="button"
+            className="w-full p-2 bg-cyan-500 hover:bg-cyan-400 text-white rounded transition-colors"
+          >
+            Copy invite link
+          </button>
           <button
             type="submit"
-            className="w-1/2 flex mt-10 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full p-2 bg-cyan-500 hover:bg-cyan-400 text-white rounded transition-colors"
           >
-            Continue
+            Take me to Scalpely
           </button>
         </div>
       </form>
     </div>
-
-    );
+  );
+     
   return (
     <>
       <Head title="Onboard" />

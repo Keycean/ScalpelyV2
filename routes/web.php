@@ -47,11 +47,23 @@ Route::middleware(['web'])->group(function () {
 // Route::post('/verify-code', [AuthController::class, 'verifyCode'])->name('verify-code');
 
 
-Route::get('/onboard', [OnboardController::class, 'index'])->name('onboard.index');
-Route::post('/onboard/step1', [OnboardController::class, 'storeStep1'])->name('onboard.step1');
-Route::post('/onboard/step2', [OnboardController::class, 'storeStep2'])->name('onboard.step2');
-Route::post('/onboard/step3', [OnboardController::class, 'storeStep3'])->name('onboard.step3');
-Route::get('/onboarding/complete', [OnboardController::class, 'completeOnboarding'])->name('onboarding.complete');
+// Group onboarding routes
+Route::middleware(['auth'])->group(function () {
+    // Render the onboarding main page
+    Route::get('/onboard', [OnboardController::class, 'index'])->name('onboard.index');
+    
+    // Step 1: Personal Information
+    Route::post('/onboard/step1', [OnboardController::class, 'storeStep1'])->name('onboard.step1');
+
+    // Step 2: Workspace Information
+    Route::post('/onboard/step2', [OnboardController::class, 'storeStep2'])->name('onboard.step2');
+
+    // Step 3: Add Members
+    Route::post('/onboard/step3', [OnboardController::class, 'storeStep3'])->name('onboard.add_members');
+
+    // Step 4: Finalize onboarding
+    Route::post('/onboard/complete', [OnboardController::class, 'completeOnboarding'])->name('onboard.complete');
+});
 
 
 
