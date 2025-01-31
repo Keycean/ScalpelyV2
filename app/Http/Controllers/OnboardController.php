@@ -89,7 +89,30 @@ class OnboardController extends Controller
 
             return Inertia::render('Onboard', ['nextStep' => 'complete']);
     }
-
+    public function bulkInvite(Request $request)
+    {
+        if (!$request->user()) {
+            return redirect('/login')->with('error', 'You need to log in first.');
+        }
+    
+        $validated = $request->validate([
+            'invite_people1' => 'nullable|string', // Comma-separated emails
+        ]);
+    
+        // Process emails
+        $emails = array_filter(explode(',', $validated['invite_people1']));
+        
+        // Validate each email
+        $validEmails = array_filter($emails, 'filter_var', FILTER_VALIDATE_EMAIL);
+    
+        // Optional: Store invites or send invitation emails
+        // You might want to create an Invite model to track these
+    
+        OnboardingDetail::where('user_id', $request->user()->id)
+            ->update(['invited_emails' => implode(',', $validEmails)]);
+    
+        return Inertia::render('Onboard', ['nextStep' => 'complete']);
+    }
     /**
      * Finalize onboarding (Step 4: Complete).
      */

@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Step 3: Add Members
     Route::post('/onboard/step3', [OnboardController::class, 'storeStep3'])->name('onboard.add_members');
-
+    Route::post('/onboard/bulk-invite', [OnboardController::class, 'bulkInvite']);
     // Step 4: Finalize onboarding
     Route::post('/onboard/complete', [OnboardController::class, 'completeOnboarding'])->name('onboard.complete');
 });
