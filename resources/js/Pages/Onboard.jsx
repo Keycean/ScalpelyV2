@@ -92,6 +92,8 @@ export default function Onboard({ user }) {
                 ? "/onboard/step2"
                 : currentStep === OnboardSteps.ADD_MEMBERS
                 ? "/onboard/step3"
+                : currentStep === OnboardSteps.BULK_INVITE
+            ? "/onboard/bulk-invite"
                 : "/onboard/complete";
 
         router.post(endpoint, formDataToSend, {
@@ -442,7 +444,32 @@ export default function Onboard({ user }) {
             </form>
         </div>
     );
-
+    const renderComplete = () => {
+        const handleFinishOnboarding = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("currentStep");
+            router.get('/dashboard');
+        };
+    
+        return (
+            <div className="w-full max-w-2xl px-6 py-8 bg-[#1D2A4D] text-white flex flex-col justify-center items-center">
+                <h2 className="text-4xl font-bold mb-2 text-center">
+                    Setting up your workspace...
+                </h2>
+                <p className="text-lg font-medium mb-6 text-[#BBB6B6] text-center">
+                    Click below to go to your dashboard
+                </p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mb-6"></div>
+                <button
+                    onClick={handleFinishOnboarding}
+                    className="w-full p-2 bg-cyan-500 hover:bg-cyan-400 text-white rounded transition-colors"
+                >
+                    Go to Dashboard
+                </button>
+            </div>
+        );
+    };
+    
     return (
         <>
             <Head title="Onboard" />
@@ -456,6 +483,7 @@ export default function Onboard({ user }) {
                         renderAddmembers()}
                     {currentStep === OnboardSteps.BULK_INVITE &&
                         renderBulkInvite()}
+                        {currentStep === OnboardSteps.COMPLETE && renderComplete()}
                 </div>
             </main>
         </>

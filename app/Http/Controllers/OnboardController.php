@@ -126,7 +126,7 @@ class OnboardController extends Controller
 
         // Mark onboarding as complete (if you have a flag for it)
         OnboardingDetail::where('user_id', $user->id)->update(['onboarding_completed' => true]);
-
+ 
         return redirect('/dashboard')->with('success', 'Onboarding completed!');
     }
 }

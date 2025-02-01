@@ -8,6 +8,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\OnboardController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/onboard/bulk-invite', [OnboardController::class, 'bulkInvite']);
     // Step 4: Finalize onboarding
     Route::post('/onboard/complete', [OnboardController::class, 'completeOnboarding'])->name('onboard.complete');
+
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 });
 
 
