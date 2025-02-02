@@ -444,31 +444,29 @@ export default function Onboard({ user }) {
             </form>
         </div>
     );
-    const renderComplete = () => {
-        const handleFinishOnboarding = (e) => {
-            e.preventDefault();
+    
+const OnboardingComplete = () => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
             localStorage.removeItem("currentStep");
             router.get('/dashboard');
-        };
-    
-        return (
-            <div className="w-full max-w-2xl px-6 py-8 bg-[#1D2A4D] text-white flex flex-col justify-center items-center">
-                <h2 className="text-4xl font-bold mb-2 text-center">
-                    Setting up your workspace...
-                </h2>
-                <p className="text-lg font-medium mb-6 text-[#BBB6B6] text-center">
-                    Click below to go to your dashboard
-                </p>
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mb-6"></div>
-                <button
-                    onClick={handleFinishOnboarding}
-                    className="w-full p-2 bg-cyan-500 hover:bg-cyan-400 text-white rounded transition-colors"
-                >
-                    Go to Dashboard
-                </button>
-            </div>
-        );
-    };
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="w-full max-w-2xl px-6 py-8 bg-[#1D2A4D] text-white flex flex-col justify-center items-center">
+            <h2 className="text-4xl font-bold mb-2 text-center">
+                Setting up your workspace...
+            </h2>
+            <p className="text-lg font-medium mb-6 text-[#BBB6B6] text-center">
+                You'll be redirected to your dashboard shortly
+            </p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+        </div>
+    );
+};
     
     return (
         <>
@@ -483,7 +481,7 @@ export default function Onboard({ user }) {
                         renderAddmembers()}
                     {currentStep === OnboardSteps.BULK_INVITE &&
                         renderBulkInvite()}
-                        {currentStep === OnboardSteps.COMPLETE && renderComplete()}
+                        {currentStep === 'complete' && <OnboardingComplete />}
                 </div>
             </main>
         </>

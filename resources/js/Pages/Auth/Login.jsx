@@ -16,7 +16,7 @@ export default function Login() {
         if (!showVerification) {
             // Send verification code
             try {
-                const response = await fetch('/auth/send-verification', {
+                const response = await fetch('/api/initiate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export default function Login() {
             }
         } else {
             // Verify code and login
-            router.post('/verify-code', data,);
+            router.post('/verify', data,);
         }
     };
     

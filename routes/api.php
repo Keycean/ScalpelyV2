@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\OnboardController;
-
+use App\Http\Controllers\LoginController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -14,6 +14,9 @@ Route::match(['get', 'post'], '/test-email', [AuthController::class, 'testEmail'
 // Verification routes
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('verify-email', [RegisterController::class, 'verifyEmail']);
+// Login routes
+Route::post('/initiate', [LoginController::class, 'initiateLogin']);
+Route::post('/verify', [LoginController::class, 'verifyLogin']);
 
 // Onboarding route
 Route::post('/onboard', [OnboardController::class, 'store']);
